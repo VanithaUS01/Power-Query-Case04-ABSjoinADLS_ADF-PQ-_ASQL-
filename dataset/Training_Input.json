@@ -1,0 +1,47 @@
+{
+	"name": "Training_Input",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage2ADF",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "Training",
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Training.xlsx",
+				"fileSystem": "newdataset"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": [
+			{
+				"name": "Start Date",
+				"type": "String"
+			},
+			{
+				"name": "Course Code",
+				"type": "String"
+			},
+			{
+				"name": "Course Name",
+				"type": "String"
+			},
+			{
+				"name": "Employee ID",
+				"type": "String"
+			},
+			{
+				"name": "Cost",
+				"type": "String"
+			},
+			{
+				"name": "Supplier",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

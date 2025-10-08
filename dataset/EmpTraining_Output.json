@@ -1,0 +1,17 @@
+{
+	"name": "EmpTraining_Output",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADF2AzureSqlDatabase",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "",
+			"table": "EmpTraining_tb"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

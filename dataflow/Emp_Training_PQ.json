@@ -1,0 +1,28 @@
+{
+	"name": "Emp_Training_PQ",
+	"properties": {
+		"type": "WranglingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"name": "Emp_Input",
+					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> Emp_Input",
+					"dataset": {
+						"referenceName": "Emp_Input",
+						"type": "DatasetReference"
+					}
+				},
+				{
+					"name": "Training_Input",
+					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> Training_Input",
+					"dataset": {
+						"referenceName": "Training_Input",
+						"type": "DatasetReference"
+					}
+				}
+			],
+			"script": "section Section1;\r\nshared Emp_Input = let AdfDoc = AzureStorage.BlobContents(\"https://azureblobsa001.blob.core.windows.net/newdataset/Emp.xlsx\"), Excel = Excel.Workbook(AdfDoc),ExcelSheet = Excel{[Item=\"Emp\",Kind=\"Sheet\"]}[Data], PromotedHeaders = Table.PromoteHeaders(ExcelSheet, [PromoteAllScalars = true]) in PromotedHeaders;\r\nshared Training_Input = let AdfDoc = AzureStorage.DataLakeContents(\"https://adlsa001.dfs.core.windows.net/newdataset/Training.xlsx\"), Excel = Excel.Workbook(AdfDoc),ExcelSheet = Excel{[Item=\"Training\",Kind=\"Sheet\"]}[Data], PromotedHeaders = Table.PromoteHeaders(ExcelSheet, [PromoteAllScalars = true]) in PromotedHeaders;\r\nshared UserQuery = let Source = #\"Emp_Input\" in Source;\r\nshared EmpTrainingMerged = let\r\n  Source = Table.NestedJoin(Emp_Input, {\"EmployeeID\"}, Training_Input, {\"Employee ID\"}, \"Training_Input\", JoinKind.Inner),\r\n  #\"Expanded Training_Input\" = Table.ExpandTableColumn(Source, \"Training_Input\", {\"Start Date\", \"Course Code\", \"Course Name\", \"Cost\", \"Supplier\"}, {\"Start Date\", \"Course Code\", \"Course Name\", \"Cost\", \"Supplier\"}),\r\n  #\"Replaced value\" = Table.ReplaceValue(#\"Expanded Training_Input\", \"M\", \"Married\", Replacer.ReplaceText, {\"MaritalStatus\"}),\r\n  #\"Replaced value 1\" = Table.ReplaceValue(#\"Replaced value\", \"S\", \"SIngle\", Replacer.ReplaceText, {\"MaritalStatus\"})\r\nin\r\n  #\"Replaced value 1\";\r\n",
+			"documentLocale": "en-us"
+		}
+	}
+}
